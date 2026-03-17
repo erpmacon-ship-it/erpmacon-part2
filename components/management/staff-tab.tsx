@@ -23,19 +23,28 @@ export function StaffTab({ project, onUpdate }: { project: any, onUpdate: (field
   const handleResendInvite = async (member: any) => {
     setIsResending(member.id);
     try {
-      const { data, error } = await supabase.functions.invoke('invite-user', {
-        body: {
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/invite-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({
           email: member.email,
           name: member.name,
           role: member.role,
           projectId: project.id,
           origin: window.location.origin
-        }
+        })
       });
       
-      if (error) {
+      const result = await response.json();
+      
+      if (!response.ok) {
+        const errorMessage = result.error || "Server error";
         // Handle the specific case where the user is already fully registered
-        if (error.message && error.message.includes('already been registered')) {
+        if (errorMessage.includes('already been registered') || errorMessage.includes('already registered')) {
           toast.info(`${member.name} is already fully registered. They can log in directly.`);
           
           // Optionally update their status to active since they are registered
@@ -46,7 +55,7 @@ export function StaffTab({ project, onUpdate }: { project: any, onUpdate: (field
           onUpdate('staff', updatedStaff);
           return;
         }
-        throw new Error(error.message || "Server error");
+        throw new Error(errorMessage);
       }
       
       toast.success(`Invitation resent to ${member.email}`);
@@ -76,19 +85,28 @@ export function StaffTab({ project, onUpdate }: { project: any, onUpdate: (field
     setIsAddOpen(false);
     
     try {
-      const { data, error } = await supabase.functions.invoke('invite-user', {
-        body: {
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/invite-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({
           email: newStaff.email,
           name: newStaff.name,
           role: newStaff.role,
           projectId: project.id,
           origin: window.location.origin
-        }
+        })
       });
       
-      if (error) {
-        console.error("Edge function error:", error);
-        throw new Error(error.message || "Server error");
+      const result = await response.json();
+      
+      if (!response.ok) {
+        const errorMessage = result.error || "Server error";
+        console.error("Edge function error:", errorMessage);
+        throw new Error(errorMessage);
       }
       
       toast.success(`Invitation email sent to ${newStaff.email}`);
