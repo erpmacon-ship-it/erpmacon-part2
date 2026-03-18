@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { ArrowLeft, Building2, Bell, ChevronDown } from 'lucide-react';
 import Image from 'next/image';
+import { ProfileSidebar } from './profile-sidebar';
 
 interface ProjectHeaderProps {
   projectId: string;
@@ -109,22 +110,26 @@ export function ProjectHeader({ projectId, projectName, user }: ProjectHeaderPro
             <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-[#0B1120]"></span>
           </button>
           
-          <div className="flex items-center gap-3 cursor-pointer group">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-bold text-white leading-tight">Admin User</p>
-              <p className="text-[10px] text-gray-500 uppercase tracking-wider">Super Administrator</p>
+          <ProfileSidebar user={user}>
+            <div className="flex items-center gap-3 cursor-pointer group">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-bold text-white leading-tight">
+                  {user?.user_metadata?.full_name || 'Admin User'}
+                </p>
+                <p className="text-[10px] text-gray-500 uppercase tracking-wider">Super Administrator</p>
+              </div>
+              <div className="w-9 h-9 rounded-full border border-cyan-500/40 overflow-hidden bg-[#111827] relative">
+                {user?.user_metadata?.avatar_url ? (
+                  <Image src={user.user_metadata.avatar_url} alt="User" fill sizes="36px" className="object-cover" referrerPolicy="no-referrer" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-cyan-500 font-bold text-sm">
+                    {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0) || 'A'}
+                  </div>
+                )}
+              </div>
+              <ChevronDown size={16} className="text-gray-500 group-hover:text-white transition-colors" />
             </div>
-            <div className="w-9 h-9 rounded-full border border-cyan-500/40 overflow-hidden bg-[#111827] relative">
-              {user?.user_metadata?.avatar_url ? (
-                <Image src={user.user_metadata.avatar_url} alt="User" fill sizes="36px" className="object-cover" referrerPolicy="no-referrer" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-cyan-500 font-bold text-sm">
-                  {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0) || 'A'}
-                </div>
-              )}
-            </div>
-            <ChevronDown size={16} className="text-gray-500 group-hover:text-white transition-colors" />
-          </div>
+          </ProfileSidebar>
         </div>
       </div>
     </header>

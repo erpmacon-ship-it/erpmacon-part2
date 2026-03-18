@@ -79,8 +79,8 @@ export default function ConstructionPage() {
       {/* Main Content */}
       <main className="p-6 max-w-[1600px] mx-auto">
         {activeTab === 'Daily Log' && <DailyLogTab project={project} />}
-        {activeTab === 'Task Management' && <TaskManagementTab project={project} />}
-        {activeTab === 'Stock' && <StockTab project={project} />}
+        {activeTab === 'Task Management' && <TaskManagementTab project={project} user={user} />}
+        {activeTab === 'Stock' && <StockTab project={project} user={user} />}
         {activeTab === 'Requisition' && <RequisitionTab project={project} />}
       </main>
     </div>
