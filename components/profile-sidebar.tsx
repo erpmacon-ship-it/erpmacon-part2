@@ -43,7 +43,7 @@ export function ProfileSidebar({ user, children }: ProfileSidebarProps) {
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
+      <SheetTrigger className="focus:outline-none">
         {children}
       </SheetTrigger>
       <SheetContent className="w-[320px] sm:w-[380px] bg-[#0B1120] border-l border-white/5 p-0 text-white flex flex-col h-full overflow-hidden">
